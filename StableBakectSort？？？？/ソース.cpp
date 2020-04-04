@@ -5,12 +5,20 @@
 #include <tuple>
 #include <algorithm>
 #include <random>
+//#include <functional>
 
-template<class K ,class V,class Sel,class Comp = std::less<K>>
-std::vector<V> StableBakectSort(const std::vector<V>& D,Sel F) {
-	std::map < K, std::vector<V>, Comp > B;
+typedef std::uintmax_t Elem;
+typedef std::tuple < Elem, Elem, Elem> Data;
+typedef std::vector<Data> DType;
+//template<class T> using MType = std::map<T, DType>;
+template<class T,class Y=T>
+struct Throw{ Y& operator ()(T& In) { return In; } };
 
-	for (auto& o : D) {
+template<class K, class V, class Sel=Throw<V,K>, class Comp = std::less<K>>
+std::vector<V> StableBakectSort(const std::vector<V>& D,Sel F= Throw<V,K>()) {
+	std::map<K, std::vector<V>, Comp> B;
+
+	for (auto& o : D) { 
 		B[F(o)].push_back(o);
 	}
 	std::vector<V> R;
@@ -20,11 +28,6 @@ std::vector<V> StableBakectSort(const std::vector<V>& D,Sel F) {
 
 	return R;
 }
-
-typedef std::uintmax_t Elem;
-typedef std::tuple < Elem, Elem, Elem> Data;
-typedef std::vector<Data> DType;
-//template<class T> using MType = std::map<T, DType>;
 
 DType MakeVector(std::size_t N, unsigned int S = 0) {
 	std::minstd_rand mr(S);
@@ -46,12 +49,14 @@ bool Show(DType& In) {
 	std::cout << std::endl<< std::endl;
 	return true;
 }
-
 int main() {
+
 	auto D = MakeVector(32);
 	Show(D);
 
-	auto R = StableBakectSort<Elem>(D, [](auto& A) {return std::get<1>(A); });
+	auto R = StableBakectSort<Elem>(D, [](auto& A)->auto& {return std::get<1>(A); });
+	//auto R = StableBakectSort<decltype(std::get<1>(Data()))>(D, [](auto& A)->auto& {return std::get<1>(A); });
+	//auto R = StableBakectSort<decltype(std::get<1>(Data()))>(D);
 	Show(R);
 
 	return true;
