@@ -15,7 +15,7 @@ template<class T,class Y=T>
 struct Throw{ Y& operator ()(T& In) { return In; } };
 
 template<class K, class V, class Sel=Throw<V,K>, class Comp = std::less<K>>
-std::vector<V> StableBakectSort(const std::vector<V>& D,Sel F= Throw<V,K>()) {
+std::vector<V> StableBakectSort(const std::vector<V>& D,Sel F) {
 	std::map<K, std::vector<V>, Comp> B;
 
 	for (auto& o : D) { 
@@ -56,8 +56,7 @@ int main() {
 
 	auto R = StableBakectSort<Elem>(D, [](auto& A)->auto& {return std::get<1>(A); });
 	//auto R = StableBakectSort<decltype(std::get<1>(Data()))>(D, [](auto& A)->auto& {return std::get<1>(A); });
-	//auto R = StableBakectSort<decltype(std::get<1>(Data()))>(D);
 	Show(R);
 
-	return true;
+	return 0;
 }
